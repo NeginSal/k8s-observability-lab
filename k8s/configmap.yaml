@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    app: go-obs-app
+data:
+  SERVICE_NAME: "observability-lab"
+  LOG_LEVEL: "info"
+  ENVIRONMENT: "development"

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-obs-app
+  labels:
+    app: go-obs-app
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-obs-app
+  template:
+    metadata:
+      labels:
+        app: go-obs-app
+        tier: backend
+    spec:
+      containers:
+      - name: app
+        image: go-obs-app:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: SERVICE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: SERVICE_NAME
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
